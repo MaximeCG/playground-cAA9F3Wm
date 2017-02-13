@@ -111,11 +111,11 @@
     var ratio = Math.min(DEFAULT_WIDTH / width, DEFAULT_HEIGHT / height);
     canvas.width = width;
     canvas.height = height;
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
+//    canvas.style.width = width + "px";
+//    canvas.style.height = height + "px";
     d.init(canvas, width, height, colors, 1 / ratio);
-    canvas.style.width = (ratio * width) + "px";
-    canvas.style.height = (ratio * height) + "px";
+//    canvas.style.width = (ratio * width) + "px";
+//    canvas.style.height = (ratio * height) + "px";
 
     if (frame >= 0 && animationId >= 0) {
       updateToFrame(frame, 1, 0);
