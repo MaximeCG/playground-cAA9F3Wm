@@ -1,9 +1,10 @@
 import java.io.File;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,9 +14,11 @@ class Enemy {
 	boolean dead = false;
 	int type;
 	String name;
-	static int count = 0; 
+	static int count = 0;
 	int id = Enemy.count++;
 	
+	public static Enemy dummy = new Enemy("Nobody", 9999, 0);
+
 	public Enemy(String[] data, int angle) {
 		name = data[0];
 		type = Integer.parseInt(data[1]);
@@ -25,13 +28,23 @@ class Enemy {
 		speed = Double.parseDouble(data[3]);
 	}
 
+	public Enemy( String name, int distance, int speed) {
+		this.distance = distance;
+		this.speed = speed;
+		this.name = name;
+	}
+
 	public String toString() {
 		return String.format("%s %d %.2f %.2f %.2f %d", name, type, distance, prevDistance, angle, id);
 	}
-	
+
 	void updatePosition() {
 		prevDistance = distance;
 		distance -= speed;
+	}
+
+	public int getThreat() {
+		return (int) (distance - speed);
 	}
 }
 
@@ -42,7 +55,7 @@ class Referee extends SoloReferee {
 		return "CGD";
 	}
 
-	private static final int ALPHA_SEP = 45/2;
+	private static final int ALPHA_SEP = 45 / 2;
 	private static final int COMBOMAX = 6;
 	public static final int HITBOX = 5;
 
@@ -52,7 +65,7 @@ class Referee extends SoloReferee {
 
 	private LinkedList<String> viewInfo;
 	private LinkedList<Enemy> enemies;
-	
+
 	int kills;
 	private int enemyCount;
 
@@ -78,20 +91,20 @@ class Referee extends SoloReferee {
 			kills = 0;
 			enemyCount = Integer.parseInt(initLines[0]);
 			direction = 180;
-			int maxAlpha = 180+ALPHA_SEP, minAlpha = 180-ALPHA_SEP;
-			
-			double sep = (maxAlpha - minAlpha)/(enemyCount-1.0);
-			
+			int maxAlpha = 180 + ALPHA_SEP, minAlpha = 180 - ALPHA_SEP;
+
+			double sep = (maxAlpha - minAlpha) / Math.max(1, enemyCount - 1.0);
+
 			if (enemyCount == 0) {
 				throw new Exception("There are no enemies");
 			}
-			
-			for (int i = 0; i < enemyCount; i ++) {
-				String[] data = initLines[i+1].split(" ");
-				Enemy e = new Enemy(data,(int)(minAlpha + sep*i));
-				enemies.add(e);				
+
+			for (int i = 0; i < enemyCount; i++) {
+				String[] data = initLines[i + 1].split(" ");
+				Enemy e = new Enemy(data, (int) (minAlpha + sep * i));
+				enemies.add(e);
 			}
-			
+
 		} catch (Exception e) {
 			lost = true;
 			reason = "Invalid test input: " + e;
@@ -102,12 +115,12 @@ class Referee extends SoloReferee {
 	public void spawn(Enemy e) {
 		enemies.add(e);
 	}
-	
+
 	public void gainPoints(int n) {
 		kills++;
 		score += n * multiplier;
 		combo++;
-		if (combo%COMBOMAX == 0) {
+		if (combo % COMBOMAX == 0) {
 			multiplier++;
 		}
 	}
@@ -121,15 +134,15 @@ class Referee extends SoloReferee {
 			deadEnemy = null;
 			String name = playerOutput[0];
 			headLine = null;
-			
+
 			if (getVisibleEnemies().size() == 0) {
 				headLine = "No enemy ship within range.";
 			} else if (!validName(name)) {
-				headLine = "Your output '"+name+"' is not one of the remaining ship names.";
+				headLine = "Your output '" + name + "' is not one of the remaining ship names.";
 			} else {
-				//List<Enemy> potentialTargs = getTargetEnemies();
+				// List<Enemy> potentialTargs = getTargetEnemies();
 				List<Enemy> potentialTargs = enemies;
-				
+
 				for (Enemy e : potentialTargs) {
 					if (e.name.equals(name)) {
 						targ = e;
@@ -137,18 +150,18 @@ class Referee extends SoloReferee {
 					}
 				}
 			}
-			
+
 			if (targ != null) {
 				enemies.remove(targ);
 				deadEnemy = targ;
 				direction = (int) (deadEnemy.angle);
 				gainPoints(10);
 			}
-			
+
 			for (Enemy e : enemies) {
 				e.updatePosition();
 				if (e.distance <= HITBOX) {
-					e.distance = Math.max(0,e.distance);
+					e.distance = Math.max(0, e.distance);
 					lost = true;
 					reasonCode = "DEAD";
 					reason = REASON_DEAD;
@@ -170,7 +183,7 @@ class Referee extends SoloReferee {
 
 	private boolean validName(String name) {
 		for (Enemy e : enemies) {
-			if (e.name.equals(name) && ((int)(e.distance - e.speed) < RANGE))
+			if (e.name.equals(name) && ((int) (e.distance - e.speed) < RANGE))
 				return true;
 		}
 		return false;
@@ -194,31 +207,53 @@ class Referee extends SoloReferee {
 	@Override
 	protected String[] getInputForPlayer() {
 		LinkedList<String> res = new LinkedList<String>();
-		
 		LinkedList<Enemy> visibleEnemies = getVisibleEnemies();
+		Enemy e1 =  null;
+		Enemy e2 =  null;
+		Collections.sort(visibleEnemies, new Comparator<Enemy>() {
+			@Override
+			public int compare(Enemy a, Enemy b) {
+				return a.getThreat() - b.getThreat();
+			}
+		});
 		
+		List<Enemy> enemiesForPlayer = new LinkedList<>();
 		
-		res.add(Integer.toString(visibleEnemies.size()));
-		for (Enemy e : visibleEnemies) {
-			res.add(e.name+" "+(int)(e.distance - e.speed));
-		}
+		if (visibleEnemies.size() > 0)
+			e1 = visibleEnemies.get(0);
+		else
+			e1 = Enemy.dummy;
+		enemiesForPlayer.add(e1);		
+		
+		if (visibleEnemies.size() > 1)
+			e2 = visibleEnemies.get(1);
+		else
+			e2 = Enemy.dummy;
+		enemiesForPlayer.add(e2);
+		
+		Collections.sort(enemiesForPlayer, new Comparator<Enemy>() {
+			@Override
+			public int compare(Enemy a, Enemy b) {
+				return a.id - b.id;
+			}
+		});
+		e1 = enemiesForPlayer.get(0);
+		e2 = enemiesForPlayer.get(1);
+		res.add(e1.name);
+		res.add(String.valueOf(e1.getThreat()));
+		res.add(e2.name);
+		res.add(String.valueOf(e2.getThreat()));
 		
 		return res.toArray(new String[0]);
 	}
-
 	private LinkedList<Enemy> getVisibleEnemies() {
 		LinkedList<Enemy> res = new LinkedList<>();
-		
+
 		for (Enemy e : enemies) {
-			if ((int)(e.distance - e.speed) < RANGE) {
+			if (e.getThreat() < RANGE) {
 				res.add(e);
 			}
 		}
-		/*
-		if (deadEnemy != null && (int)(deadEnemy.distance - deadEnemy.speed) < RANGE) {
-			res.add(deadEnemy);
-		}
-		*/
 		return res;
 	}
 
@@ -249,38 +284,50 @@ class Referee extends SoloReferee {
 		double minDist = 0;
 		Enemy minEnemy = null;
 		for (Enemy e : enemies) {
-			if (minEnemy == null || (e.distance-e.speed) < minDist) {
+			if (minEnemy == null || (e.distance - e.speed) < minDist) {
 				res.clear();
 				minEnemy = e;
-				minDist = e.distance-e.speed;
+				minDist = e.distance - e.speed;
 			}
-			if (e.distance-e.speed == minDist) {
+			if (e.distance - e.speed == minDist) {
 				res.add(e);
 			}
 		}
 		return res;
 	}
-	
+
 	@Override
-	protected String[] getTextForConsole() {				
+	protected String[] getTextForConsole() {
 		if (reasonCode == "DEAD") {
 			Enemy killedBy = getClosestEnemies().get(0);
 			String[] out = new String[1];
-			out[0] = "You were hit by "+killedBy.name;
+			out[0] = "You were hit by " + killedBy.name;
 			return out;
-			
+
 		} else {
-			String[] out = new String[enemies.size() + 1];
-			if (enemies.isEmpty()) {
+			LinkedList<Enemy> visibleEnemies = getVisibleEnemies();
+			LinkedList<Enemy> firstEnemies = new LinkedList<>();
+			Collections.sort(visibleEnemies, new Comparator<Enemy>() {
+				@Override
+				public int compare(Enemy a, Enemy b) {
+					return a.getThreat() - b.getThreat();
+				}
+			});
+			
+			if (visibleEnemies.size() > 0)
+				firstEnemies.add(visibleEnemies.get(0));
+			if (visibleEnemies.size() > 1)
+				firstEnemies.add(visibleEnemies.get(1));
+			
+			String[] out = new String[firstEnemies.size() + 1];
+			if (firstEnemies.isEmpty()) {
 				out[0] = "No ships remaining.";
 			} else {
 				out[0] = "Threats within range:";
 			}
-			for (int i = 0; i < enemies.size(); i++) {
-				Enemy e = enemies.get(i);
-				if ((int)(e.distance - e.speed) < RANGE) {
-					out[i + 1] = e.name+" "+((int)(e.distance - e.speed))+"m";
-				}
+			for (int i = 0; i < firstEnemies.size(); i++) {
+				Enemy e = firstEnemies.get(i);
+				out[i + 1] = e.name + " " + e.getThreat() + "m";
 			}
 			return out;
 		}
@@ -288,7 +335,7 @@ class Referee extends SoloReferee {
 
 	@Override
 	protected String[] getAdditionalFrameDataAtGameStartForView() {
-		
+
 		return new String[0];
 	}
 
@@ -308,22 +355,22 @@ class Referee extends SoloReferee {
 		}
 		viewInfo.addFirst(Integer.toString(count));
 		viewInfo.add(Integer.toString(direction));
-		
+
 		viewInfo.add(Integer.toString(score));
 		viewInfo.add(Integer.toString(kills) + " " + getVisibleEnemies().size());
-		
+
 		return viewInfo.toArray(new String[viewInfo.size()]);
 	}
 
 	@Override
 	protected int getMillisTimeForFirstRound() {
-		//return 600000;
+		// return 600000;
 		return super.getMillisTimeForFirstRound();
 	}
 
 	@Override
 	protected int getMillisTimeForRound() {
-		//return 600000;
+		// return 600000;
 		return super.getMillisTimeForRound();
 	}
 
@@ -338,7 +385,7 @@ class Referee extends SoloReferee {
 	}
 
 	public static void main(String[] args) {
-		
+
 		try {
 			new Referee(System.in, System.out, System.err);
 		} catch (Throwable t) {
@@ -364,7 +411,7 @@ abstract class SoloReferee {
 	protected static final File LOG_FILE = new File("/tmp/referee.log");
 
 	private PrintStream out;
-	//private PrintStream err;
+	// private PrintStream err;
 
 	int nbInitLines = 0;
 	String[] initLines;
@@ -408,7 +455,7 @@ abstract class SoloReferee {
 
 	protected SoloReferee(InputStream in, PrintStream out, PrintStream err) throws IOException {
 		this.out = out;
-		//this.err = err;
+		// this.err = err;
 		start(in);
 	}
 

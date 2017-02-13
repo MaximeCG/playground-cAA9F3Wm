@@ -1,1 +1,1 @@
-@[run]({"stubs": ["Player.java"], "command": ""})
+@[run]({"stubs": ["stubs/Player.java"], "command": ""})
