@@ -1676,6 +1676,10 @@ Drawer.prototype.init = function(canvas, width, height, colors) {
       self.loaded = true;
       self.reinit();
       self.changed = true;
+
+      if(self.onloadcallback) {
+        self.onloadcallback();
+      }
     }
     loader.onError = function(e) {
       console.log(e);
@@ -1686,6 +1690,10 @@ Drawer.prototype.init = function(canvas, width, height, colors) {
     this.renderer.resize(width, height);
     self.reinit();
   }
+};
+
+Drawer.prototype.onload = function(cb) {
+  this.onloadcallback = cb;
 };
 
 Drawer.prototype.createRenderer=function(width, height) {

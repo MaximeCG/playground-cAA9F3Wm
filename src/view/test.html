@@ -143,6 +143,10 @@
 
     canvas = document.getElementsByTagName('canvas')[0];
     d = new Drawer(canvas, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    d.onload(function() {
+      frame0();
+      startAnimation();
+    })
     resize();
 /*
     var stats = new Stats();
@@ -444,8 +448,6 @@
 
   <script>
     go();
-    frame0();
-    startAnimation();
   </script>
 
 </body>
