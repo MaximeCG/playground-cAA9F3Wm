@@ -1,0 +1,8 @@
+content:
+  title : Course title
+  plan:
+    - title: The first chapter or lesson
+      description: This lesson will help you to discover ...
+      plan:
+        - title: The first lesson
+          description: This is the first lesson of the first chpater. This level is optional if only lessons are provided
