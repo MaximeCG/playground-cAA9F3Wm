@@ -1,6 +1,6 @@
 title : New title :)
 plan:
-  - title: The first chapter or lesson
+  - title: The first chapter
     description: This lesson will help you to discover ...
     statement: lesson.md
 projects:
