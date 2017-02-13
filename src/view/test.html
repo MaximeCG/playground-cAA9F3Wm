@@ -144,7 +144,7 @@
     canvas = document.getElementsByTagName('canvas')[0];
     d = new Drawer(canvas, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     resize();
-
+/*
     var stats = new Stats();
     stats.setMode(2);
     stats.domElement.style.position = 'absolute';
@@ -157,6 +157,7 @@
         requestAnimationFrame(recorder.save.bind(recorder));
       stats.end();
     };
+*/
     frame = 0;
     progress = 1;
 
@@ -339,13 +340,13 @@
 </script>
 <script type='text/javascript' src='../view/viewer.js'></script>
 </head>
-<body style="left: 0px; top: 0px; margin: 0; padding: 0;">
+<body style="left: 0px; top: 0px; margin: 0; padding: 0; line-height: 0; position: absolute; width: 100%; height: 100%;">
   <div
-    style="left: 0px; top: 0px; margin: 0; padding: 0; width: 987px; height: 544px; display: table">
+    style="left: 0px; top: 0px; margin: 0; padding: 0; position: absolute; width: 100%; height: 100%;">
     <div id="container"
-      style="display: table-cell; vertical-align: middle; text-align: center">
+      style=" position: absolute; width: 100%; height: 100%;">
       <canvas
-        style="margin: 0; padding: 0; width: 987px; height: 544px; left: 0px; top: 0px; border: 1px solid black; line-height: 1px;"
+        style="margin: 0; padding: 0; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; border: 0px solid black; line-height: 0px;"
         width="987" height="544"></canvas>
     </div>
   </div>
