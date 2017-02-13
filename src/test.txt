@@ -1,0 +1,6 @@
+5
+HotDroid 5 70 10
+HotDroid 5 70 10
+HotDroid 5 70 10
+HotDroid 5 70 10
+Buzz 0 100 10

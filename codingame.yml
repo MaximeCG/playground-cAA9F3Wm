@@ -1,8 +1,12 @@
-content:
-  title : Course title
-  plan:
-    - title: The first chapter or lesson
-      description: This lesson will help you to discover ...
-      plan:
-        - title: The first lesson
-          description: This is the first lesson of the first chpater. This level is optional if only lessons are provided
+title : New title :)
+plan:
+  - title: The first chapter or lesson
+    description: This lesson will help you to discover ...
+    statement: lesson.md
+projects:
+  sologame:
+    root: /src
+    builder:
+      name: nantoniazzi/jdk8-sologame-builder
+    runner:
+      name: nantoniazzi/jdk8-sologame-runner
