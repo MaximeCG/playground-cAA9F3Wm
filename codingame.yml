@@ -1,6 +1,6 @@
-title : New title :)
+title : CodinGame Onboarfing
 plan:
-  - title: The first chapter
+  - title: The if statement
     description: This lesson will help you to discover ...
     statement: lesson.md
 projects:
