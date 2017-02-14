@@ -11,4 +11,4 @@ projects:
       version: 6
     runner:
       name: nantoniazzi/jdk8-sologame-runner
-      version: 6
+      version: 7
