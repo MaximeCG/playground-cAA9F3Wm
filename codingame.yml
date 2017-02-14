@@ -8,7 +8,7 @@ projects:
     root: /src
     builder:
       name: nantoniazzi/jdk8-sologame-builder
-      version: 5
+      version: 6
     runner:
       name: nantoniazzi/jdk8-sologame-runner
-      version: 5
+      version: 6
