@@ -4,7 +4,7 @@
  * #########################################################
  */
 
-var PIXI = PIXI || top.PIXI;
+var PIXI = PIXI;
 
 var lerp = function(a, b, u) {
   return a + (b - a) * u;
@@ -1551,7 +1551,7 @@ Drawer.prototype.isReady = function() {
 
 Drawer.prototype.createRenderer = function(width, height) {
   var renderer;
-  var firefox = top.navigator.userAgent.indexOf("Firefox") >= 0 || top.navigator.userAgent.indexOf("Trident") >= 0;
+  var firefox = window.navigator.userAgent.indexOf("Firefox") >= 0 || window.navigator.userAgent.indexOf("Trident") >= 0;
   if (firefox) {
     renderer = new PIXI.CanvasRenderer(width, height, this.canvas, false, true, true);
   } else {
