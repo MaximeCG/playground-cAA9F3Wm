@@ -1,1 +1,1 @@
-@[run]({"stubs": ["stubs/Player.java"], "command": ""})
+@[run]({"stubs": ["stubs/Player.java", "stubs/test.txt"], "command": ""})
