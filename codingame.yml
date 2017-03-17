@@ -1,6 +1,6 @@
-title : CodinGame Challenge
+title : CodinGame Onboarding
 plan:
-  - title: CodinGame Challenge
+  - title: CodinGame Challenge 
     statement: challenge.md
 projects:
   sologame:
