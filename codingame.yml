@@ -1,14 +1,10 @@
-title : CodinGame Onboarfing
+title : CodinGame Challenge
 plan:
-  - title: The if statement
-    description: This lesson will help you to discover ...
-    statement: lesson.md
+  - title: CodinGame Challenge
+    statement: challenge.md
 projects:
   sologame:
     root: /src
-    builder:
-      name: nantoniazzi/jdk8-sologame-builder
-      version: 6
     runner:
       name: nantoniazzi/jdk8-sologame-runner
-      version: 7
+      version: latest
