@@ -1,5 +1,4 @@
 import java.util.*;
-
 class Player {
 
     public static void main(String args[]) {
@@ -11,15 +10,8 @@ class Player {
             int dist1 = in.nextInt(); // distance to enemy 1
             String enemy2 = in.next(); // name of enemy 2
             int dist2 = in.nextInt(); // distance to enemy 2
-
-            // Write an action using System.out.println()
-
-            // Enter the code here
-            if (dist1 < dist2) {
-                System.out.println(enemy1);
-            } else {
-                System.out.println(enemy2);
-            }
+            
+            System.out.println(Solution.getNearestEnemy(enemy1, dist1, enemy2, dist2));
 
         }
     }
