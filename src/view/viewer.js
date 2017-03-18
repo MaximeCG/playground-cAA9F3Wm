@@ -39,6 +39,9 @@
       for (var i = 0; i < myself.globalDrawers.length; i++) {
         myself.globalDrawers[i].init(myself.globalDrawers[i].ctx, myself.globalDrawers[i].initWidth, myself.globalDrawers[i].initHeight, myself.globalDrawers[i].overSampling);
       }
+      if(myself.onloadcallback) {
+        myself.onloadcallback();
+      }
     });
   };
   window.skynetFinalLoader = new skynetFinalLoader();
@@ -138,6 +141,9 @@
             ];
   };
 
+  Drawer.prototype.onload = function(cb) {
+    this.onloadcallback = cb;
+  };
 
   Drawer.prototype.init = function(ctx, width, height, overSampling) {
     console.log("Drawer init: " + width + "," + height);
